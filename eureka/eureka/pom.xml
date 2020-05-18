@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.2.7.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.eureka</groupId>
 	<artifactId>eureka</artifactId>
@@ -14,10 +15,135 @@
 	<name>eureka</name>
 	<description>Eureka service Discovery</description>
 
+
 	<properties>
 		<java.version>1.8</java.version>
 		<spring-cloud.version>Hoxton.SR4</spring-cloud.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>10</java.version>
+		<maven-compiler-plugin-version>3.5.1</maven-compiler-plugin-version>
+		<frontend-maven-plugin.version>1.0</frontend-maven-plugin.version>
+		<frontend-maven-plugin.node.version>v6.7.0
+		</frontend-maven-plugin.node.version>
+		<frontend-maven-plugin.npm.version>3.10.3
+		</frontend-maven-plugin.npm.version>
+		<maven.version>3.3.3</maven.version>
+		<maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
+		<spring-cloud-starter-parent.version>Finchley.RELEASE
+		</spring-cloud-starter-parent.version>
+		<spring-boot.version>2.0.3.RELEASE</spring-boot.version>
+		<docker.image.prefix>cloud-core</docker.image.prefix>
+		<docker.plugin.version>0.4.13</docker.plugin.version>
+		<maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>
+		<asciidoctor-maven-plugin.version>1.5.3
+		</asciidoctor-maven-plugin.version>
+		<docker.pushImage>false</docker.pushImage>
+		<docker.registry>docker.io</docker.registry>
+		<docker.registry.slash>/</docker.registry.slash>
 	</properties>
+	<profiles>
+		<profile>
+			<id>test</id>
+			<properties>
+				<npm.build.command>run build:test</npm.build.command>
+				<default.spring.profiles>test</default.spring.profiles>
+				<docker.pushImage>true</docker.pushImage>
+			</properties>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<npm.build.command>run build:prod</npm.build.command>
+				<default.spring.profiles>prod</default.spring.profiles>
+				<docker.pushImage>true</docker.pushImage>
+			</properties>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>demo</id>
+			<properties>
+				<npm.build.command>run build:demo</npm.build.command>
+				<default.spring.profiles>demo</default.spring.profiles>
+				<docker.pushImage>true</docker.pushImage>
+			</properties>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+		</profile>
+
+		<profile>
+			<id>dev</id>
+			<properties>
+				<npm.build.command>run build:dev</npm.build.command>
+				<default.spring.profiles>standalone,cloudlocal
+				</default.spring.profiles>
+				<docker.registry></docker.registry>
+				<docker.registry.slash></docker.registry.slash>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.spotify</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>${docker.plugin.version}</version>
+						<executions>
+							<execution>
+								<id>build-image</id>
+								<phase>install</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<dockerDirectory>${project.build.directory}/docker
+							</dockerDirectory>
+							<image>${docker.registry}${docker.registry.slash}${docker.image.prefix}/${project.artifactId}
+							</image>
+							<imageName>${docker.registry}${docker.registry.slash}${docker.image.prefix}/${project.artifactId}
+							</imageName>
+							<newName>${docker.registry}${docker.registry.slash}${docker.image.prefix}/${project.artifactId}:${git.commit.id.abbrev}
+							</newName>
+							<pushImage>${docker.pushImage}</pushImage>
+							<forceTags>true</forceTags>
+							<imageTags>
+								<imageTag>${git.commit.id.abbrev}</imageTag>
+								<imageTag>latest</imageTag>
+							</imageTags>
+							<registryUrl>http://${docker.registry}</registryUrl>
+							<resources>
+								<resource>
+									<targetPath>/</targetPath>
+									<directory>${project.build.directory}</directory>
+									<include>${project.build.finalName}.jar</include>
+								</resource>
+								<resource>
+									<targetPath>/</targetPath>
+									<directory>${project.basedir}/scripts</directory>
+									<include>wait-for-service.sh</include>
+								</resource>
+							</resources>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>javax.activation</groupId>
+								<artifactId>activation</artifactId>
+								<version>1.1.1</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<dependencies>
 		<dependency>

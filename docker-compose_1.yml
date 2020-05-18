@@ -1,0 +1,12 @@
+version: '0.1'
+services:
+  eureka-server:
+    image: banukotte/eureka
+    ports:
+      - "8761:8761"
+  eureka-client:
+    build: banukotte/zuul
+    ports:
+      - "8765:8765"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka

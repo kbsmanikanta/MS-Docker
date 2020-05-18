@@ -1,12 +1,20 @@
-version: '0.1'
+version: '2'
 services:
-  eureka-server:
-    image: banukotte/eureka
+  discovery-service:
+    image: kbsmanikanta/eureka:v1
     ports:
-      - "8761:8761"
-  eureka-client:
-    build: banukotte/zuul
-    ports:
-      - "8765:8765"
+     - 8761:8761
     environment:
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+      - SPRING_PROFILES_ACTIVE=cloudlocal
+      - JAVA_OPTS=-Xms64m -Xmx64m -Xss512k -Dfile.encoding=UTF8
+  gateway:
+    image: kbsmanikanta/zuul:v1
+    ports:
+      - 8765:8765
+    environment:
+      - SPRING_PROFILES_ACTIVE=cloudlocal
+      - JAVA_OPTS=-Xms64m -Xmx64m -Xss512k -Dfile.encoding=UTF8
+      - HOST_IP=10.0.2.15
+    depends_on:
+      discovery-service:
+        condition: wait_for_service.sh service_healthy
