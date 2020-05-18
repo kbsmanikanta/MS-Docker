@@ -1,0 +1,28 @@
+version: '3.0'
+
+services:
+
+  eureka-server:
+    image: kbsmanikanta/eureka:v1
+    ports:
+        - "8761:8761"
+
+  zuul:
+    image: kbsmanikanta/zuul:v1
+    ports:
+        - "8765:8765"
+
+  ms-a:
+    image: kbsmanikanta/ms-a:v1
+    ports:
+        - "9001:9001"
+
+  ms-b:
+    image: kbsmanikanta/ms-b:v1
+    ports:
+        - "9002:9002"
+
+  ms-c:
+    image: kbsmanikanta/ms-c:v1
+    ports:
+         - "9003:9003"
