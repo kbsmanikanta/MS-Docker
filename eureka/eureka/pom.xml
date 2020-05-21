@@ -11,9 +11,9 @@
 	</parent>
 	<groupId>com.eureka</groupId>
 	<artifactId>eureka</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>eureka</name>
-	<description>Eureka service Discovery</description>
+	<description>eureka-discovery</description>
 
 
 	<properties>
@@ -104,33 +104,8 @@
 							</execution>
 						</executions>
 						<configuration>
-							<dockerDirectory>${project.build.directory}/docker
-							</dockerDirectory>
-							<image>${docker.registry}${docker.registry.slash}${docker.image.prefix}/${project.artifactId}
-							</image>
-							<imageName>${docker.registry}${docker.registry.slash}${docker.image.prefix}/${project.artifactId}
-							</imageName>
-							<newName>${docker.registry}${docker.registry.slash}${docker.image.prefix}/${project.artifactId}:${git.commit.id.abbrev}
-							</newName>
-							<pushImage>${docker.pushImage}</pushImage>
-							<forceTags>true</forceTags>
-							<imageTags>
-								<imageTag>${git.commit.id.abbrev}</imageTag>
-								<imageTag>latest</imageTag>
-							</imageTags>
-							<registryUrl>http://${docker.registry}</registryUrl>
-							<resources>
-								<resource>
-									<targetPath>/</targetPath>
-									<directory>${project.build.directory}</directory>
-									<include>${project.build.finalName}.jar</include>
-								</resource>
-								<resource>
-									<targetPath>/</targetPath>
-									<directory>${project.basedir}/scripts</directory>
-									<include>wait-for-service.sh</include>
-								</resource>
-							</resources>
+							<repository>kbsmanikanta/eureka</repository>
+							<tag>${project.version}</tag>
 						</configuration>
 						<dependencies>
 							<dependency>
@@ -188,6 +163,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
 		</plugins>
 	</build>
 

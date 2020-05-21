@@ -1,3 +1,4 @@
+
 version: '2'
 services:
   discovery-service:
@@ -15,6 +16,3 @@ services:
       - SPRING_PROFILES_ACTIVE=cloudlocal
       - JAVA_OPTS=-Xms64m -Xmx64m -Xss512k -Dfile.encoding=UTF8
       - HOST_IP=10.0.2.15
-    depends_on:
-      discovery-service:
-        condition: wait_for_service.sh service_healthy
